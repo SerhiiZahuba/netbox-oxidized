@@ -2,7 +2,6 @@ from netbox.views import generic
 from . import forms, models, tables, filtersets
 from .oxidized import get_device_config
 
-
 from django.views.generic import ListView, CreateView
 from .models import Status
 
@@ -11,22 +10,29 @@ import requests
 import json
 from django.shortcuts import render
 from django.http import HttpResponse
-
 from .utils import parse_metrics
 
-from django.shortcuts import render
+from django.views.generic import TemplateView
+from datetime import datetime
+
 
 class StatusView(TemplateView):
     template_name = "netbox_test/status_list.html"
 
     def get_context_data(self, **kwargs):
+        from datetime import datetime
+        import requests
+
         context = super().get_context_data(**kwargs)
         url = "http://172.26.19.4:8080/metrics"
         try:
             response = requests.get(url)
             status_data = {}
             backup_sizes = {}
-            oxidized_status = 0  # За замовчуванням
+            device_table = []  # Таблиця з даними пристроїв
+            total_config_lines = 0
+            total_backup_size = 0
+            service_status = "Unknown"
 
             for line in response.text.splitlines():
                 if line.startswith("#") or line.strip() == "":
@@ -34,26 +40,58 @@ class StatusView(TemplateView):
                 parts = line.split(" ", 1)
                 if len(parts) == 2:
                     key, value = parts
-                    if "status" in key and key != "oxidized_status":
-                        status_data[key] = float(value) if value.replace('.', '', 1).isdigit() else 0
-                    elif "backup_size" in key:
-                        backup_sizes[key] = float(value) if value.replace('.', '', 1).isdigit() else 0
-                    elif key == "oxidized_status":
-                        oxidized_status = int(value) if value.isdigit() else 0
+                    # Статус служби
+                    if "oxidized_status" in key:
+                        service_status = "Up" if int(value) == 1 else "Down"
 
-            # Додаємо обробку статусу служби
-            context["status"] = status_data
-            context["backup_sizes"] = backup_sizes
-            context["service_status"] = "Up" if oxidized_status == 1 else "Down"
+                    # Дані пристроїв
+                    if "oxidized_device_last_backup_status" in key:
+                        full_name = key.split("{")[1].split("}")[0]
+                        attributes = {kv.split("=")[0]: kv.split("=")[1].strip('"') for kv in full_name.split(",")}
+                        ip = attributes.get("name", "N/A")
+                        model = attributes.get("model", "N/A")
+                        status = "Success" if int(value) == 2 else "Failed"
+
+                        # Знаходимо розмір бекапу та кількість рядків
+                        backup_size = 0
+                        config_lines = 0
+                        for line2 in response.text.splitlines():
+                            if f'oxidized_device_config_size{{full_name="{attributes["full_name"]}"' in line2:
+                                backup_size = int(line2.split(" ")[1])
+                            if f'oxidized_device_config_lines{{full_name="{attributes["full_name"]}"' in line2:
+                                config_lines = int(line2.split(" ")[1])
+
+                        # Додаємо пристрій до таблиці
+                        device_table.append({
+                            "ip": ip,
+                            "model": model,
+                            "status": status,
+                            "backup_size": backup_size / 1024,  # В кілобайтах
+                            "config_lines": config_lines,
+                        })
+
+                    # Загальний розмір бекапу
+                    if "oxidized_device_config_size" in key:
+                        total_backup_size += int(value)
+
+                    # Загальна кількість рядків конфігурації
+                    if "oxidized_device_config_lines" in key:
+                        total_config_lines += int(value)
+
+            context["service_status"] = service_status
+            context["device_table"] = device_table
+            context["total_backup_size"] = total_backup_size / 1024  # В кілобайтах
+            context["total_config_lines"] = total_config_lines
+            context["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Час оновлення
 
         except Exception as e:
-            context["status"] = {}
-            context["backup_sizes"] = {}
-            context["service_status"] = "Down"  # Якщо є помилка, вважаємо, що служба не працює
+            context["service_status"] = "Error"
+            context["device_table"] = []
+            context["total_backup_size"] = 0
+            context["total_config_lines"] = 0
+            context["updated_at"] = "Error retrieving data"
 
         return context
-
-
 
 
 class StatusListView(ListView):
@@ -64,6 +102,7 @@ class StatusCreateView(CreateView):
     model = Status
     fields = ['name', 'description']
     template_name = 'netbox_test/status_form.html'
+
 
 
 def device_config_view(request, pk):
