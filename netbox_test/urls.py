@@ -14,7 +14,7 @@ urlpatterns = (
         'model': models.TestNameServer
     }),
 
-
+    path("device/<int:pk>/config/", views.device_config_view, name="device_config"),
     path('test-zones/', views.TestZoneListView.as_view(), name='testzone_list'),
     path('test-zones/add/', views.TestZoneEditView.as_view(), name='testzone_add'),
     path('test-zones/<int:pk>/', views.TestZoneView.as_view(), name='testzone'),

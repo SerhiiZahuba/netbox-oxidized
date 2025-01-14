@@ -1,0 +1,8 @@
+{% extends "dcim/device.html" %}
+
+{% block tabs %}
+{{ block.super }}
+<li>
+    <a href="{% url 'plugins:netbox_test:device_config' device.pk %}">Configuration</a>
+</li>
+{% endblock %}

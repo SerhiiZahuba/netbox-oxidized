@@ -1,5 +1,13 @@
 from netbox.views import generic
 from . import forms, models, tables, filtersets
+from .oxidized import get_device_config
+
+
+def device_config_view(request, pk):
+    device_name = "example-device"  # Отримайте ім'я пристрою з бази
+    config = get_device_config(device_name)
+
+    return render(request, "netbox_test/device_config.html", {"config": config})
 
 class TestNameServerView(generic.ObjectView):
     queryset = models.TestNameServer.objects.all()

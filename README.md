@@ -10,4 +10,5 @@
    vim /opt/netbox/netbox/netbox/configuration.py
    netbox_test
 7) python3 /opt/netbox/netbox/manage.py migrate
-8) restart netbox ()
+8) sudo systemctl restart netbox
+   pip install requests
