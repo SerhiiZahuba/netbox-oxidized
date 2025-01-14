@@ -9,10 +9,6 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ("extras", "0107_convert_reports_to_scripts"),
-    ]
-
     operations = [
         migrations.CreateModel(
             name="TestNameServer",

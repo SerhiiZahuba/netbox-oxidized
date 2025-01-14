@@ -1,5 +1,5 @@
 from netbox.plugins import PluginMenuButton, PluginMenuItem
-from utilities.choices import ButtonColorChoices
+
 
 testnameserver_buttons = [
     PluginMenuButton(
