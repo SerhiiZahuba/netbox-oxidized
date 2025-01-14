@@ -1,7 +1,9 @@
 {% extends 'generic/_base.html' %}
 {% block content %}
 <div class="container mt-4">
-    <h2>Service Information</h2>
+    <h2>Backup Information</h2>
+    <p>Size of all backups: <strong>{{ total_backup_size|floatformat:2 }} kB</strong></p>
+    <p>Config lines backed up: <strong>{{ total_config_lines }}</strong></p>
     <p>Status: <strong>{{ service_status }}</strong></p>
     <p>Updated at: <span id="updatedAt">{{ updated_at }}</span>
         <button class="btn btn-primary btn-sm" onclick="location.reload()">Оновити дані</button>
@@ -34,11 +36,5 @@
         {% endfor %}
         </tbody>
     </table>
-</div>
-
-<div class="container mt-4">
-    <h2>Backup Information</h2>
-    <p>Size of all backups: <strong>{{ total_backup_size|floatformat:2 }} kB</strong></p>
-    <p>Config lines backed up: <strong>{{ total_config_lines }}</strong></p>
 </div>
 {% endblock %}
