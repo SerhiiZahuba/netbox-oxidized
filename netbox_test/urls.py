@@ -15,7 +15,7 @@ urlpatterns = (
     }),
 
     path("device/<int:pk>/config/", views.device_config_view, name="device_config"),
-    path('status/', views.status_list_view, name='status_list'),
+    path("status/", views.StatusView.as_view(), name="status_list"),
     path('status/add/', views.StatusCreateView.as_view(), name='status_add'),
     path('test-zones/', views.TestZoneListView.as_view(), name='testzone_list'),
     path('test-zones/add/', views.TestZoneEditView.as_view(), name='testzone_add'),

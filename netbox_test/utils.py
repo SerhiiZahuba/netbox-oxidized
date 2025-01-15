@@ -11,3 +11,4 @@ def parse_metrics(url):
             key, value = parts
             data[key] = float(value) if value.replace(".", "", 1).isdigit() else value
     return data
+
