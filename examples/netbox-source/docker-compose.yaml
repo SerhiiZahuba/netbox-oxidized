@@ -1,0 +1,49 @@
+services:
+  oxidized:
+    image: oxidized/oxidized:latest
+    container_name: oxidized
+    restart: always
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./oxidized_config:/home/oxidized/.config/oxidized
+    environment:
+      - TZ=${TZ:-UTC}
+    depends_on:
+      - netbox-source
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # Sidecar: queries NetBox API and serves device list for Oxidized HTTP source
+  netbox-source:
+    image: python:3.11-slim
+    container_name: oxidized-netbox-source
+    restart: always
+    volumes:
+      - ./scripts:/app:ro
+    working_dir: /app
+    command: python3 netbox_source.py --serve
+    environment:
+      - TZ=${TZ:-UTC}
+      # Required: your NetBox instance URL and API token
+      - NETBOX_URL=${NETBOX_URL}
+      - NETBOX_TOKEN=${NETBOX_TOKEN}
+      # Optional: FQDN suffix appended when device has no primary IP
+      - DOMAIN_SUFFIX=${DOMAIN_SUFFIX:-}
+      # Optional: NetBox API filters (default: all active devices)
+      # Examples:
+      #   status=active&limit=0                              → all active devices
+      #   status=active&role=voice-gateway&manufacturer=cisco → Cisco voice gateways only
+      #   status=active&role=router&role=switch               → routers and switches
+      #   status=active&tag=oxidized                          → devices tagged "oxidized"
+      - DEVICE_FILTERS=${DEVICE_FILTERS:-status=active&limit=0}
+      # Optional: HTTP server port (default: 8080)
+      - LISTEN_PORT=${LISTEN_PORT:-8080}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"

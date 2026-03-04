@@ -1,0 +1,51 @@
+# Oxidized configuration example
+# Place this at: oxidized_config/config
+#
+# This config uses the netbox-source sidecar as an HTTP source.
+# Adjust credentials, model_map, and output settings for your environment.
+
+# Default device credentials
+username: your_ssh_username
+password: your_ssh_password
+model: cisco
+interval: 86400
+use_model: true
+
+input:
+  default: ssh
+  ssh:
+    timeout: 20
+    ssh_no_host_key_check: true
+
+output:
+  default: git
+  git:
+    user: Oxidized
+    email: oxidized@example.com
+    repo: /home/oxidized/.oxidized/configs/oxidized.git
+
+# Map manufacturer slugs from NetBox to Oxidized model names
+# Left side: NetBox manufacturer slug (lowercase)
+# Right side: Oxidized model name
+model_map:
+  cisco: ios
+  juniper: junos
+  arista: eos
+  paloaltonetworks: panos
+  fortinet: fortios
+
+rest: 0.0.0.0:8888
+
+# HTTP source pointing to the netbox-source sidecar
+source:
+  default: http
+  http:
+    url: http://netbox-source:8080/
+    scheme: http
+    delimiter: !ruby/regexp /:/
+    map:
+      name: name
+      model: model
+      ip: ip
+    secure: false
+    hosts_location: results

@@ -83,6 +83,10 @@ Once installed and configured:
 4. Use the **Copy** button to copy the config
 5. Click **Open in Oxidized** to view version history
 
+## Using NetBox as Oxidized's Device Source
+
+Want Oxidized to pull its device inventory from NetBox automatically? See the [examples/netbox-source](examples/netbox-source/) directory for a ready-to-use Docker sidecar that queries the NetBox API and serves devices to Oxidized via HTTP source.
+
 ## Documentation
 
 Full documentation is available on the [Wiki](https://github.com/sieteunoseis/netbox-oxidized/wiki):
