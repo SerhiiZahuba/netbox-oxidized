@@ -1,0 +1,14 @@
+{% load i18n %}
+
+<div hx-get="{% url 'plugins:netbox_oxidized:widget_backup_status' %}?stale_hours={{ stale_hours }}&critical_hours={{ critical_hours }}&cache_timeout={{ cache_timeout }}"
+     hx-trigger="load"
+     hx-swap="innerHTML">
+  <div class="d-flex justify-content-center align-items-center py-4">
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">{% trans "Loading..." %}</span>
+      </div>
+      <div class="mt-2 small text-muted">{% trans "Loading backup status..." %}</div>
+    </div>
+  </div>
+</div>

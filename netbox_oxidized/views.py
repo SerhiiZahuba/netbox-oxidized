@@ -14,6 +14,7 @@ from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
 from .client import get_client
+from .widgets import get_backup_status_context
 
 logger = logging.getLogger(__name__)
 
@@ -344,4 +345,25 @@ class ConfigAuditView(LoginRequiredMixin, PermissionRequiredMixin, View):
                 "error": error,
                 "external_url": external_url,
             },
+        )
+
+
+class WidgetBackupStatusContentView(LoginRequiredMixin, View):
+    """HTMX endpoint that returns backup status widget content."""
+
+    def get(self, request):
+        stale_hours = int(request.GET.get("stale_hours", 24))
+        critical_hours = int(request.GET.get("critical_hours", 168))
+
+        context = get_backup_status_context(
+            stale_hours=stale_hours,
+            critical_hours=critical_hours,
+        )
+
+        return HttpResponse(
+            render_to_string(
+                "netbox_oxidized/widgets/backup_status_content.html",
+                context,
+                request=request,
+            )
         )

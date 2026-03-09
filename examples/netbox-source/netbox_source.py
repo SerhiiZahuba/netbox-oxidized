@@ -105,11 +105,13 @@ def transform_devices(devices):
         # Fall back to FQDN if no IP
         ip = primary_ip or (f"{name}{DOMAIN_SUFFIX}" if DOMAIN_SUFFIX else name)
 
-        oxidized_devices.append({
-            "name": name,
-            "model": manufacturer,
-            "ip": ip,
-        })
+        oxidized_devices.append(
+            {
+                "name": name,
+                "model": manufacturer,
+                "ip": ip,
+            }
+        )
 
     return {"results": oxidized_devices}
 

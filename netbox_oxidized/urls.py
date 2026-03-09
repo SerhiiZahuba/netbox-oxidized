@@ -11,4 +11,5 @@ urlpatterns = [
     path("diff/", views.ConfigDiffView.as_view(), name="config_diff"),
     path("audit/", views.ConfigAuditView.as_view(), name="config_audit"),
     path("device/<int:pk>/content/", views.DeviceOxidizedContentView.as_view(), name="device_content"),
+    path("widget/backup-status/", views.WidgetBackupStatusContentView.as_view(), name="widget_backup_status"),
 ]
