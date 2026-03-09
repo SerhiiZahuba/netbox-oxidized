@@ -123,29 +123,25 @@ def get_backup_status_context(stale_hours=24, critical_hours=168):
             "key": "recent",
             "label": f"< {stale_hours}h",
             "count": recent,
-            "bg_class": "bg-success",
-            "text_class": "text-white",
+            "badge_class": "text-bg-success",
         },
         {
             "key": "stale",
             "label": f"> {stale_hours}h",
             "count": stale,
-            "bg_class": "bg-warning",
-            "text_class": "text-dark",
+            "badge_class": "text-bg-warning",
         },
         {
             "key": "critical",
             "label": f"> {critical_hours // 24}d",
             "count": critical,
-            "bg_class": "bg-danger",
-            "text_class": "text-white",
+            "badge_class": "text-bg-danger",
         },
         {
             "key": "failed",
             "label": "Failed",
             "count": failed,
-            "bg_class": "bg-dark",
-            "text_class": "text-white",
+            "badge_class": "text-bg-dark",
         },
     ]
 
@@ -156,8 +152,7 @@ def get_backup_status_context(stale_hours=24, critical_hours=168):
                 "key": "never",
                 "label": "Never",
                 "count": never,
-                "bg_class": "bg-secondary",
-                "text_class": "text-white",
+                "badge_class": "text-bg-secondary",
             }
         )
 
