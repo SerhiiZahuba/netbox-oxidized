@@ -16,6 +16,14 @@ A NetBox plugin that displays [Oxidized](https://github.com/ytti/oxidized) devic
 - **Device Filtering** - Configurable by device role and manufacturer slugs
 - **HTMX Loading** - Async content loading without blocking the page
 - **Caching** - API responses cached to reduce load on Oxidized
+- **Dashboard Widget** - Backup status summary showing node freshness counts
+
+## Screenshots
+
+### Dashboard Widget
+Backup status widget showing fresh, stale, critical, and never-backed-up node counts.
+
+![Dashboard Widget](docs/widget-backup-status.png)
 
 ## Requirements
 
