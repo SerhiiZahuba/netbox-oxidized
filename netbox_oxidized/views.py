@@ -5,7 +5,7 @@ import logging
 
 from dcim.models import Device
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -17,6 +17,13 @@ from .client import get_client
 from .widgets import get_backup_status_context
 
 logger = logging.getLogger(__name__)
+
+
+class SuperuserRequiredMixin(UserPassesTestMixin):
+    """Restrict access to superusers only."""
+
+    def test_func(self):
+        return self.request.user.is_superuser
 
 
 def should_show_tab(obj):
@@ -112,7 +119,7 @@ class DeviceOxidizedContentView(LoginRequiredMixin, PermissionRequiredMixin, Vie
         )
 
 
-class SettingsView(View):
+class SettingsView(SuperuserRequiredMixin, View):
     """Plugin settings page."""
 
     template_name = "netbox_oxidized/settings.html"
@@ -131,7 +138,7 @@ class SettingsView(View):
         )
 
 
-class TestConnectionView(View):
+class TestConnectionView(SuperuserRequiredMixin, View):
     """Test connection to Oxidized API."""
 
     def post(self, request):

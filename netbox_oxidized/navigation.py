@@ -31,7 +31,7 @@ menu = PluginMenu(
                 PluginMenuItem(
                     link="plugins:netbox_oxidized:settings",
                     link_text="Configuration",
-                    permissions=["dcim.view_device"],
+                    permissions=["netbox_oxidized.superuser_required"],
                 ),
             ),
         ),
